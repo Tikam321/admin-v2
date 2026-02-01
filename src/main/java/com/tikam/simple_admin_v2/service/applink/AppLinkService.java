@@ -6,6 +6,9 @@ import com.tikam.simple_admin_v2.exception.AdminException;
 import com.tikam.simple_admin_v2.exception.ErrorCode;
 import com.tikam.simple_admin_v2.repository.applink.AppLinkRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +22,49 @@ public class AppLinkService {
 
     private final AppLinkRepository appLinkRepository;
 
-    public AppLinkResponseList getAppLinkList() {
-        List<AppLinkResponse> list = appLinkRepository.findAll().stream()
+    public AppLinkResponseList getAppLinkList(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<AppLink> appLinkPage = appLinkRepository.findAll(pageRequest);
+
+        List<AppLinkResponse> list = appLinkPage.getContent().stream()
                 .map(AppLinkResponse::from)
                 .collect(Collectors.toList());
-        return AppLinkResponseList.builder().list(list).build();
+
+        return AppLinkResponseList.builder()
+                .list(list)
+                .totalCount(appLinkPage.getTotalElements())
+                .page(appLinkPage.getNumber())
+                .size(appLinkPage.getSize())
+                .totalPages(appLinkPage.getTotalPages())
+                .nextCursor(1)
+                .build();
+    }
+
+    public AppLinkCurserResponse getAppLinkListByKeySet(int size, long curser) {
+        Pageable pageable = PageRequest.of(0, size );
+        List<AppLink> appLinkPage = appLinkRepository.findNextPage(curser, pageable);
+
+        List<AppLinkResponse> list = appLinkPage.stream()
+                .map(AppLinkResponse::from)
+                .collect(Collectors.toList());
+
+        // 2. The Next Cursor
+        Long nextCurser = null;
+        if (!list.isEmpty()) {
+            nextCurser = list.get(list.size()-1).getAppId();
+        }
+
+        // 3. Has Next (Optional but helpful)
+        // A simple trick: Ask for 'size + 1' in the repository.
+        // If you get back 'size + 1' items, you know there is more.
+        // Then remove the extra item before sending the list.
+        boolean hasNext =  list.size() == size;
+
+        return AppLinkCurserResponse.builder()
+                .list(list)
+                .hasNext(hasNext)
+                .nextCurser(nextCurser)
+                .build();
     }
 
     public AppLinkResponse getAppLinkDetail(Long appId) {
@@ -40,7 +81,6 @@ public class AppLinkService {
                 .description(request.getDescription())
                 .status(request.getStatus())
                 .build();
-        System.out.println(appLink);
         AppLink saved = appLinkRepository.save(appLink);
         return AppLinkResponse.from(saved);
     }

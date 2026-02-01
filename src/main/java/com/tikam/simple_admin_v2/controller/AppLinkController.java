@@ -3,6 +3,7 @@ package com.tikam.simple_admin_v2.controller;
 import com.tikam.simple_admin_v2.dto.applink.*;
 import com.tikam.simple_admin_v2.service.applink.AppLinkService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,18 @@ public class AppLinkController {
 
     private final AppLinkService appLinkService;
 
+//    @GetMapping("/applink/list")
+//    public AppLinkResponseList getAppLinkList(
+//            @Min(0) @RequestParam(defaultValue = "0") int page,
+//            @Min(10) @RequestParam(defaultValue = "10") int size) {
+//        return appLinkService.getAppLinkList(page, size);
+//    }
+
     @GetMapping("/applink/list")
-    public AppLinkResponseList getAppLinkList() {
-        return appLinkService.getAppLinkList();
+    public AppLinkCurserResponse getAppLinkList(
+            @Min(1) @RequestParam(defaultValue = "1") int size,
+            @RequestParam(defaultValue = "0") int curser) {
+        return appLinkService.getAppLinkListByKeySet(size, curser);
     }
 
     @GetMapping("/applink")
@@ -27,7 +37,6 @@ public class AppLinkController {
 
     @PostMapping("/applink/add")
     public AppLinkResponse addAppLink(@Valid @RequestBody AppLinkAddRequest request) {
-        System.out.println("conteorller " + request);
         return appLinkService.addAppLink(request);
     }
 

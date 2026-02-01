@@ -48,6 +48,8 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
 
+        System.out.println(ex.getBindingResult().getAllErrors());
+
         APIResponse<Map<String, String>> response = APIResponse.<Map<String, String>>builder()
                 .success(false)
                 .message("Validation Failed")

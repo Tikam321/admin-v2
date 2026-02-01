@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.3.7'
-	id 'io.spring.dependency-management' version '1.1.7'
+	alias(libs.plugins.spring.boot)
+	alias(libs.plugins.spring.dependency.management)
 }
 
 group = 'com.tikam'
@@ -24,17 +24,48 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation libs.spring.boot.starter.data.jpa
+	implementation libs.spring.boot.starter.web
+	implementation libs.spring.boot.starter.validation
+	implementation libs.spring.boot.starter.actuator
+	implementation libs.spring.boot.starter.data.elasticsearch
 	
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
-	annotationProcessor 'org.projectlombok:lombok'
+	// Jackson JSR310 for Java 8 Date/Time support
+	implementation libs.jackson.datatype.jsr310
+
+	// JWT Dependencies
+	implementation libs.jjwt.api
+	runtimeOnly libs.jjwt.impl
+	runtimeOnly libs.jjwt.jackson
+
+	// QueryDSL - Explicitly using string syntax to add 'jakarta' classifier
+	implementation "com.querydsl:querydsl-jpa:${libs.versions.querydsl.get()}:jakarta"
+	annotationProcessor "com.querydsl:querydsl-apt:${libs.versions.querydsl.get()}:jakarta"
+
+	annotationProcessor libs.jakarta.annotation.api
+	annotationProcessor libs.jakarta.persistence.api
 	
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	compileOnly libs.lombok
+	runtimeOnly libs.h2
+	annotationProcessor libs.lombok
+	
+	testImplementation libs.spring.boot.starter.test
+	testRuntimeOnly libs.junit.platform.launcher
+}
+
+// Configure the annotation processor to generate QueryDSL Q-classes
+def querydslDir = "$buildDir/generated/querydsl"
+
+sourceSets {
+    main.java.srcDirs += [ querydslDir ]
+}
+
+tasks.withType(JavaCompile) {
+    options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
+}
+
+clean.doLast {
+    file(querydslDir).deleteDir()
 }
 
 tasks.named('test') {

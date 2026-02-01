@@ -31,7 +31,6 @@ public class AdminUserController {
         return ResponseEntity.ok(APIResponse.ok(response));
     }
 
-
     @GetMapping("/user-id/{userId}")
     public ResponseEntity<APIResponse<AdminUserResponse>> getAdminUserByUserId(@PathVariable Long userId) {
         AdminUserResponse response = adminUserService.getAdminUserByUserId(userId);
