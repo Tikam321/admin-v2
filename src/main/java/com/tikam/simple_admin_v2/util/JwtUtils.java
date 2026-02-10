@@ -1,5 +1,7 @@
 package com.tikam.simple_admin_v2.util;
 
+import com.tikam.simple_admin_v2.exception.AdminException;
+import com.tikam.simple_admin_v2.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -34,17 +36,23 @@ public class JwtUtils {
     }
 
     public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
+        Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
                 .build()
                 .parseClaimsJws(token);
-            log.info("the user is authenticated");
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            log.error("Invalid JWT token: {}", e.getMessage());
-            return false;
-        }
+        log.info("the user is authenticated");
+        return true;
+//        try {
+//            Jwts.parserBuilder()
+//                .setSigningKey(SECRET_KEY)
+//                .build()
+//                .parseClaimsJws(token);
+//            log.info("the user is authenticated");
+//            return true;
+//        } catch (JwtException | IllegalArgumentException e) {
+//            log.error("Invalid JWT token: {}", e.getMessage());
+//            return false;
+//        }
     }
 
     public Long getUserIdFromToken(String token) {
