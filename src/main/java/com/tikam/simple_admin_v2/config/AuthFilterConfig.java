@@ -5,6 +5,7 @@ import com.tikam.simple_admin_v2.entity.admin.AdminUser;
 import com.tikam.simple_admin_v2.exception.AdminException;
 import com.tikam.simple_admin_v2.exception.ErrorCode;
 import com.tikam.simple_admin_v2.repository.admin.AdminUserRepository;
+import com.tikam.simple_admin_v2.repository.query.ThemeManagementQueryRepository;
 import com.tikam.simple_admin_v2.util.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

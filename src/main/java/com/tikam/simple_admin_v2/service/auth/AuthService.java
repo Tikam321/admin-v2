@@ -8,6 +8,7 @@ import com.tikam.simple_admin_v2.exception.AdminException;
 import com.tikam.simple_admin_v2.exception.ErrorCode;
 import com.tikam.simple_admin_v2.repository.UserRepository;
 import com.tikam.simple_admin_v2.repository.admin.AdminUserRepository;
+import com.tikam.simple_admin_v2.service.auth.refreshToken.RefreshTokenService;
 import com.tikam.simple_admin_v2.util.JwtUtils;
 import com.tikam.simple_admin_v2.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final AdminUserRepository adminUserRepository;
     private final JwtUtils jwtUtils;
+    private final RefreshTokenService refreshTokenService;
 
     public LoginResponse login(LoginRequest request) {
         // 1. Find User by Email
@@ -57,11 +59,15 @@ public class AuthService {
         // 4. Generate Token
         String token = jwtUtils.generateToken(user.getUserId(), user.getEmailAddress());
 
+        // 5. generate refresh token
+        String refreshToken = refreshTokenService.createRefreshToken(user.getUserId());
+
         return LoginResponse.builder()
                 .token(token)
                 .userId(user.getUserId())
                 .email(user.getEmailAddress())
                 .role(adminUser.getAdminType().name())
+                .refreshToken(refreshToken)
                 .build();
     }
 }

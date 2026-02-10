@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 public class ThemeManagementListResponse {
     List<ThemeManagementResponse> list;
-    int totalCount;
+    long totalCount;
     int page;
     int size;
     int totalPages;

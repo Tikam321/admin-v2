@@ -1,11 +1,13 @@
 package com.tikam.simple_admin_v2.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Base64;
-
+import java.util.*;
+@Slf4j
 public class PasswordUtils {
 
     private static final SecureRandom RANDOM = new SecureRandom();
@@ -26,8 +28,10 @@ public class PasswordUtils {
             md.update(Base64.getDecoder().decode(salt));
             // Hash the password
             byte[] hashedPassword = md.digest(password.getBytes(StandardCharsets.UTF_8));
+            log.info("Hashed Password: {}", Base64.getEncoder().encodeToString(hashedPassword));
             return Base64.getEncoder().encodeToString(hashedPassword);
         } catch (NoSuchAlgorithmException e) {
+            log.error("Error hashing password", e);
             throw new RuntimeException("Error hashing password", e);
         }
     }
@@ -47,5 +51,8 @@ public class PasswordUtils {
         System.out.println("Salt: " + salt);
         System.out.println("Hash: " + hash);
         System.out.println("Verify: " + verifyPassword("password123", salt, hash));
+
+        Map<Integer,Integer> mp = new HashMap();
+        List<Integer> ans = Arrays.asList(1,2,3);
     }
 }

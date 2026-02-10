@@ -11,8 +11,9 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+@Getter
+@Setter
 @IdClass(ThemeVersionId.class)
-
 public class ThemeVersion extends BaseDateTimeEntity {
     @EqualsAndHashCode.Include
     @Id

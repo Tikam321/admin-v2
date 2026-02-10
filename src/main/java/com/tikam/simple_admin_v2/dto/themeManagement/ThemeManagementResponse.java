@@ -24,6 +24,4 @@ public class ThemeManagementResponse {
                 .createdAt(themeManagement.getCreatedAt())
                 .updatedAt(themeManagement.getUpdatedAt()).build();
     }
-
-
 }
