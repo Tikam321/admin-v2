@@ -39,7 +39,7 @@ public class AuthFilterConfig extends OncePerRequestFilter {
             if (verifyAuthHeader(authHeader)) {
                 String token = authHeader.substring(7);
                 // 2. validate token
-                if (jwtUtils.validateToken(token)) {
+                if (isJwtFormat(token) && jwtUtils.validateToken(token) ) {
                     System.out.println("the token is verified " + jwtUtils.getUserIdFromToken(token));
                     Long userId = jwtUtils.getUserIdFromToken(token);
                     String email = jwtUtils.getEmailFromToken(token);
@@ -70,6 +70,11 @@ public class AuthFilterConfig extends OncePerRequestFilter {
             // 7.  cleanup to avid memory leak
             UserContext.clearContext();
         }
+    }
+
+    private boolean isJwtFormat(String token) {
+        String[] parts = token.split("\\.");
+        return parts.length == 3;
     }
 
     private void handleSecurityException(HttpServletResponse response, HttpStatus status, String message) throws IOException {

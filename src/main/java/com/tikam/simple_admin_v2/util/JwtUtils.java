@@ -7,7 +7,9 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -17,11 +19,20 @@ import java.util.Date;
 @Slf4j
 public class JwtUtils {
 
+    @Value("${jwt.global-key}")
+    private  String globalKey;
+    private  Key SECRET_KEY;
+
+
+    @PostConstruct
+    public void init() {
+        this.SECRET_KEY = Keys.hmacShaKeyFor(globalKey.getBytes());
+    }
+
     // In production, store this in application.properties
     // Must be at least 256 bits (32 characters) for HS256
-    private static final String SECRET_STRING = "MySuperSecretKeyForSimpleAdminV2Project_MustBeLong";
-    private static final Key SECRET_KEY = Keys.hmacShaKeyFor(SECRET_STRING.getBytes());
-    
+//    private static final String SECRET_STRING = "MySuperSecretKeyForSimpleAdminV2Project_MustBeLong";
+
     // Token validity: 24 hours
     private static final long EXPIRATION_TIME = 86400000; 
 
@@ -42,17 +53,6 @@ public class JwtUtils {
                 .parseClaimsJws(token);
         log.info("the user is authenticated");
         return true;
-//        try {
-//            Jwts.parserBuilder()
-//                .setSigningKey(SECRET_KEY)
-//                .build()
-//                .parseClaimsJws(token);
-//            log.info("the user is authenticated");
-//            return true;
-//        } catch (JwtException | IllegalArgumentException e) {
-//            log.error("Invalid JWT token: {}", e.getMessage());
-//            return false;
-//        }
     }
 
     public Long getUserIdFromToken(String token) {

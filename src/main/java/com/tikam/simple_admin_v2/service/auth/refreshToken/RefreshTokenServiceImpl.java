@@ -1,6 +1,7 @@
 package com.tikam.simple_admin_v2.service.auth.refreshToken;
 
 import com.tikam.simple_admin_v2.dto.auth.RefreshTokenRequest;
+import com.tikam.simple_admin_v2.dto.auth.RefreshTokenResponse;
 import com.tikam.simple_admin_v2.entity.RefreshToken;
 import com.tikam.simple_admin_v2.entity.User;
 import com.tikam.simple_admin_v2.exception.AdminException;
@@ -70,12 +71,23 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Transactional
-    public String generateJwtToken(RefreshTokenRequest refreshTokenRequest) {
+    public RefreshTokenResponse generateJwtToken(RefreshTokenRequest refreshTokenRequest) {
         String refreshToken  = refreshTokenRequest.refreshToken();
+        System.out.println(refreshToken);
         RefreshToken refreshTokenObj = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new AdminException(ErrorCode.NOT_FOUND, "refresh token not found"));
         verifyExpiration(refreshTokenObj);
+
             User user = refreshTokenObj.getUser();
-            return jwtUtils.generateToken(user.getUserId(), user.getEmailAddress());
+            refreshTokenRepository.delete(refreshTokenObj);
+            //forcefully deleting refresh token immediately
+            refreshTokenRepository.flush();
+
+            String newRefreshToken = createRefreshToken(user.getUserId());
+            String newJwtToken =  jwtUtils.generateToken(user.getUserId(), user.getEmailAddress());
+            return RefreshTokenResponse.builder()
+                    .token(newJwtToken)
+                    .refresh_token(newRefreshToken)
+                    .build();
     }
 }

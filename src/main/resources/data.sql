@@ -50,12 +50,11 @@ SELECT
     '1122334455',
     'Engineering',
     'ENG01',
-    '5b722b307fce6c944905d132691d5e4a2214b7fe92b738920eb3fce3a90420a19256c32e96c85724a896651f9421735d', -- Dummy Hash
+    'Ad95j8WW4+ZPYQHqV8dkwrZB54pD61hEIAUBvhd/jSw=',
     'salt123', -- Dummy Salt
     1706090000,
     1706090000
 FROM usr_gen;
-
 -- 3. Existing AppLink Data (100,000 records)
 INSERT INTO applink (app_name, app_url, description, status, created_at, updated_at)
 WITH RECURSIVE cnt(x) AS (

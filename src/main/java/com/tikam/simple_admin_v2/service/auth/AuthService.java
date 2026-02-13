@@ -70,4 +70,13 @@ public class AuthService {
                 .refreshToken(refreshToken)
                 .build();
     }
+
+    public static void main(String[] args) {
+        String salt = "salt123";
+        String password = "password123";
+
+        String hash = PasswordUtils.hashPassword(password, salt);
+        System.out.println(hash);
+        System.out.println("5b722b307fce6c944905d132691d5e4a2214b7fe92b738920eb3fce3a90420a19256c32e96c85724a896651f9421735d");
+    }
 }

@@ -29,3 +29,7 @@ logging:
     name: logs/app.log
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+
+jwt:
+  global-key: MySuperSecretKeyForSimpleAdminV2Project_MustBeLong

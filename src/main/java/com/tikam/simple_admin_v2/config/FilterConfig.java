@@ -14,6 +14,5 @@ public class FilterConfig {
         registrationBean.addUrlPatterns("/admin/*"); // intercept all requests
         registrationBean.setOrder(1); // high priority
         return registrationBean;
-
     }
 }
