@@ -1,0 +1,3 @@
+2026-02-17T00:30:50.781+05:30  INFO 49703 --- [simple_admin_v2] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-02-17T00:30:50.967+05:30  INFO 49703 --- [simple_admin_v2] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-02-17T00:30:50.983+05:30  INFO 49703 --- [simple_admin_v2] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
