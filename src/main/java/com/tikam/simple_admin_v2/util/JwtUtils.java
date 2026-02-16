@@ -62,6 +62,7 @@ public class JwtUtils {
                 .parseClaimsJws(token)
                 .getBody();
         return Long.parseLong(claims.getSubject());
+
     }
     
     public String getEmailFromToken(String token) {
