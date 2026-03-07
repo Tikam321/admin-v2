@@ -32,7 +32,7 @@ public enum DeviceType {
     private static final Map<Integer, DeviceType> deviceTypeCodeMap =
             Collections.unmodifiableMap(Stream.of(values()).collect(Collectors.toMap(
                             DeviceType::getCode,
-                            Function.identity()
+                            a -> a
                     )));
 
     private static final  Map<String, DeviceType> deviceTypeValueMap =

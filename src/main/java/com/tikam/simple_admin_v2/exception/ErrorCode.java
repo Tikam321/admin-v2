@@ -12,8 +12,8 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"),
     FORBIDDEN(HttpStatus.FORBIDDEN, "Authorization failed"),
     TOKEN_EXPIRED(HttpStatus.NOT_FOUND, "JWT Token Expired"),
-    INVALID_TOKEN(HttpStatus.NOT_FOUND, "Invalid JWT Token");
-
+    INVALID_TOKEN(HttpStatus.NOT_FOUND, "Invalid JWT Token"),
+    ARGUMENT_IS_INVALID(HttpStatus.NOT_FOUND, "argument is invalid");
 
 
     private final HttpStatus status;

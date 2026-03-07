@@ -23,7 +23,7 @@ spring:
   sql:
     init:
       mode: never
-      data-locations: classpath:data.sql,classpath:dummy_device_data.sql  # Explicitly list SQL files to run
+      data-locations: classpath:data.sql,classpath:dummy_device_data.sql,classpath:policy_data.sql  # Explicitly list SQL files to run
 #  h2:
 #    console:
 #      enabled: true

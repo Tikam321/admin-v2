@@ -1,0 +1,7 @@
+package com.tikam.simple_admin_v2.repository.policy;
+
+import com.tikam.simple_admin_v2.entity.policy.CompanyLicensePolicy;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CompanyLicensePolicyRepository extends JpaRepository<CompanyLicensePolicy, Integer> {
+}

@@ -3,6 +3,7 @@ plugins {
 	alias(libs.plugins.spring.boot)
 	alias(libs.plugins.spring.dependency.management)
     alias(libs.plugins.sonarqube)
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 group = 'com.tikam'
@@ -54,6 +55,7 @@ dependencies {
 	
 	testImplementation libs.spring.boot.starter.test
 	testRuntimeOnly libs.junit.platform.launcher
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 // Configure the annotation processor to generate QueryDSL Q-classes
