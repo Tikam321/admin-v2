@@ -27,12 +27,12 @@ jobs:
 #      - name: run test cases
 #        run: ./gradlew test
 #
-#      - name: Build with Gradle Wrapper
-#        run: ./gradlew build
-
-      - name: Build and Analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonar --info
+      - name: Build with Gradle Wrapper
+        run: ./gradlew build
+#
+#      - name: Build and Analyze
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#        run: ./gradlew build sonar --info
 

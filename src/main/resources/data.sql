@@ -29,7 +29,7 @@ FROM admin_gen;
 -- Updated to include password and salt
 -- Password: "password123", Salt: "salt123"
 -- Hash: "5b722b307fce6c944905d132691d5e4a2214b7fe92b738920eb3fce3a90420a19256c32e96c85724a896651f9421735d" (Example hash)
-INSERT INTO usr (user_id, company_id, employee_number, global_name, local_name, nickname, email_address, single_id, country_name, primary_phone_number, business_phone_number, voip_phone_number, department_name, department_code, password, salt, created_unix_time, updated_unix_time)
+INSERT INTO usr (user_id, company_id, employee_number, global_name, local_name, nickname, email_address, single_id, country_name, primary_phone_number, business_phone_number, voip_phone_number, department_name, department_code, user_ep_id, password, salt, created_unix_time, updated_unix_time)
 WITH RECURSIVE usr_gen(x) AS (
     SELECT 1
     UNION ALL
@@ -50,6 +50,7 @@ SELECT
     '1122334455',
     'Engineering',
     'ENG01',
+    'EPID' || x, -- Added user_ep_id
     'Ad95j8WW4+ZPYQHqV8dkwrZB54pD61hEIAUBvhd/jSw=',
     'salt123', -- Dummy Salt
     1706090000,

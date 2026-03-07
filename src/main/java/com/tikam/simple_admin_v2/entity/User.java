@@ -45,6 +45,9 @@ public class User {
 
     private String departmentCode;
 
+    @Column(name = "user_ep_id")
+    private String userEpId; // Added userEpId field
+
     // Added Password and Salt fields for Authentication
     @Column(nullable = false)
     private String password;

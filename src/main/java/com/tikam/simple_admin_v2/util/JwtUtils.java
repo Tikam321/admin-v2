@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -62,7 +63,6 @@ public class JwtUtils {
                 .parseClaimsJws(token)
                 .getBody();
         return Long.parseLong(claims.getSubject());
-
     }
     
     public String getEmailFromToken(String token) {
@@ -72,5 +72,9 @@ public class JwtUtils {
                 .parseClaimsJws(token)
                 .getBody();
         return claims.get("email", String.class);
+    }
+
+    public static void main(String[] args) {
+       Math.sqrt(12);
     }
 }

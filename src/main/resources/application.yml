@@ -15,6 +15,7 @@ spring:
   sql:
     init:
       mode: always
+      data-locations: classpath:data.sql,classpath:dummy_device_data.sql # Explicitly list SQL files to run
   h2:
     console:
       enabled: true
@@ -30,6 +31,10 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
 
+device:
+  stats:
+    limit: 500
+    responseSize: 100
 
 jwt:
   global-key: MySuperSecretKeyForSimpleAdminV2Project_MustBeLong

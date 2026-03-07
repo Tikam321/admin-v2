@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	alias(libs.plugins.spring.boot)
 	alias(libs.plugins.spring.dependency.management)
+    alias(libs.plugins.sonarqube)
 }
 
 group = 'com.tikam'
@@ -38,6 +39,8 @@ dependencies {
 	runtimeOnly libs.jjwt.impl
 	runtimeOnly libs.jjwt.jackson
 
+    runtimeOnly 'org.postgresql:postgresql'
+
 	// QueryDSL - Explicitly using string syntax to add 'jakarta' classifier
 	implementation "com.querydsl:querydsl-jpa:${libs.versions.querydsl.get()}:jakarta"
 	annotationProcessor "com.querydsl:querydsl-apt:${libs.versions.querydsl.get()}:jakarta"
@@ -70,4 +73,14 @@ clean.doLast {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "Tikam321_admin-v2"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.organization", "tikam321"
+        // Exclude DTOs, Entities, and config from coverage
+        property "sonar.exclusions", "**/dto/**, **/entity/**, **/config/**, **/SimpleAdminV2Application.java"
+    }
 }
