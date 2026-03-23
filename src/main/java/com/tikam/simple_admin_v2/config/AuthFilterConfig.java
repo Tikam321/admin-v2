@@ -44,7 +44,8 @@ public class AuthFilterConfig extends OncePerRequestFilter {
                     Long userId = jwtUtils.getUserIdFromToken(token);
                     String email = jwtUtils.getEmailFromToken(token);
                     //3 .load admin details
-                    AdminUser adminUser = adminUserRepository.findByUserId(userId).orElseThrow(() -> new AdminException(ErrorCode.NOT_FOUND, "user don't have admin access"));
+                    AdminUser adminUser = adminUserRepository.findByUserId(userId)
+                            .orElseThrow(() -> new AdminException(ErrorCode.NOT_FOUND, "user don't have admin access"));
 
                     if (adminUser != null && "ACTIVE".equals(adminUser.getStatus())) {
                         // 4. create user info

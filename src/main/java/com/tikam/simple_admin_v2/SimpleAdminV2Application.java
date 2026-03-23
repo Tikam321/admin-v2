@@ -8,6 +8,8 @@ public class SimpleAdminV2Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SimpleAdminV2Application.class, args);
+
+
 	}
 
 }
