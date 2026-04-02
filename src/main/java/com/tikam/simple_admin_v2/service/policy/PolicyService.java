@@ -1,10 +1,7 @@
 package com.tikam.simple_admin_v2.service.policy;
 
 import com.tikam.simple_admin_v2.dto.APIResponse;
-import com.tikam.simple_admin_v2.dto.policy.OrgPolicyRequest;
-import com.tikam.simple_admin_v2.dto.policy.OrgPolicyTreeResponse;
-import com.tikam.simple_admin_v2.dto.policy.PortalPolicyRequest;
-import com.tikam.simple_admin_v2.dto.policy.PortalUserPolicyResponse;
+import com.tikam.simple_admin_v2.dto.policy.*;
 import com.tikam.simple_admin_v2.enums.PolicyTreeLevel;
 import com.tikam.simple_admin_v2.exception.AdminException;
 import com.tikam.simple_admin_v2.exception.ErrorCode;
@@ -16,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -50,4 +48,9 @@ public abstract class PolicyService {
 
 
     public abstract APIResponse<PortalUserPolicyResponse> getUserPolicyForPortal(@Valid PortalPolicyRequest portalPolicyRequest);
+    public  abstract List<CompanyPolicyResponse> getCompanyList(int companyId);
+    public abstract CompanyPolicyResponse getCompanyPolicy(int companyId, int policyId);
+    public abstract PolicyResponse getDefaultPolicy(int policyLicenseId, int policyId);
+
+
 }

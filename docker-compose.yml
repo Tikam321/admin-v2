@@ -1,38 +1,38 @@
 version: '3.8'
 
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
-    container_name: elasticsearch
-    environment:
-      - node.name=elasticsearch
-      - cluster.name=es-docker-cluster
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - xpack.security.enabled=false
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - es_data:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-    networks:
-      - elastic
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.11.1
-    container_name: kibana
-    ports:
-      - "5601:5601"
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    depends_on:
-      - elasticsearch
-    networks:
-      - elastic
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+#    container_name: elasticsearch
+#    environment:
+#      - node.name=elasticsearch
+#      - cluster.name=es-docker-cluster
+#      - discovery.type=single-node
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - xpack.security.enabled=false
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#    volumes:
+#      - es_data:/usr/share/elasticsearch/data
+#    ports:
+#      - "9200:9200"
+#    networks:
+#      - elastic
+#
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:8.11.1
+#    container_name: kibana
+#    ports:
+#      - "5601:5601"
+#    environment:
+#      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+#    depends_on:
+#      - elasticsearch
+#    networks:
+#      - elastic
 
   # --- The MASTER Database (for Writes) ---
   db-master:
@@ -63,47 +63,47 @@ services:
       retries: 5
 
   # --- The SLAVE Database (for Reads) ---
-  db-slave:
-    image: postgres:15
-    container_name: postgres-slave
-    ports:
-      - "5433:5432" # Slave is on port 5433 to avoid conflict
-    volumes:
-      - ./data/slave:/var/lib/postgresql/data
-    environment:
-      # These are needed for the container to start, but it will be overwritten by the backup
-      - POSTGRES_DB=mydatabase
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - PGDATA=/var/lib/postgresql/data # Explicitly define data directory
-    command: >
-      bash -c "
-        # 1. Wait for the master to be ready
-        until pg_isready -h db-master -p 5432; do
-          echo 'Waiting for master database...'
-          sleep 2;
-        done;
-  
-        # 2. Clean out the existing data directory
-        rm -rf /var/lib/postgresql/data/*
-  
-        # 3. Create a base backup from the master
-        echo 'Creating base backup from master...'
-        PGPASSWORD=replicator_password pg_basebackup -h db-master -p 5432 -U replicator -D /var/lib/postgresql/data -Fp -Xs -R;
-      
-        # FIX 2: changing permission from user to postgres
-         chown -R postgres:postgres /var/lib/postgresql/data
-         chmod 700 /var/lib/postgresql/data
-        
-        # 4. Start the PostgreSQL server in standby mode
-        echo 'Starting slave server...'
-      
-        # Start the PostgreSQL server AS THE 'postgres' USER
-        exec gosu postgres postgres
-      "
-    depends_on:
-      db-master:
-        condition: service_healthy # Wait for the master's healthcheck to pass
+#  db-slave:
+#    image: postgres:15
+#    container_name: postgres-slave
+#    ports:
+#      - "5433:5432" # Slave is on port 5433 to avoid conflict
+#    volumes:
+#      - ./data/slave:/var/lib/postgresql/data
+#    environment:
+#      # These are needed for the container to start, but it will be overwritten by the backup
+#      - POSTGRES_DB=mydatabase
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_PASSWORD=postgres
+#      - PGDATA=/var/lib/postgresql/data # Explicitly define data directory
+#    command: >
+#      bash -c "
+#        # 1. Wait for the master to be ready
+#        until pg_isready -h db-master -p 5432; do
+#          echo 'Waiting for master database...'
+#          sleep 2;
+#        done;
+#
+#        # 2. Clean out the existing data directory
+#        rm -rf /var/lib/postgresql/data/*
+#
+#        # 3. Create a base backup from the master
+#        echo 'Creating base backup from master...'
+#        PGPASSWORD=replicator_password pg_basebackup -h db-master -p 5432 -U replicator -D /var/lib/postgresql/data -Fp -Xs -R;
+#
+#        # FIX 2: changing permission from user to postgres
+#         chown -R postgres:postgres /var/lib/postgresql/data
+#         chmod 700 /var/lib/postgresql/data
+#
+#        # 4. Start the PostgreSQL server in standby mode
+#        echo 'Starting slave server...'
+#
+#        # Start the PostgreSQL server AS THE 'postgres' USER
+#        exec gosu postgres postgres
+#      "
+#    depends_on:
+#      db-master:
+#        condition: service_healthy # Wait for the master's healthcheck to pass
 
 #  networks:
 #    default:

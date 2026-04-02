@@ -4,17 +4,15 @@ spring:
   datasource:
     master:
       url: jdbc:postgresql://localhost:5432/mydatabase
-      # driverClassName: org.postgresql.Driver # Let Spring Boot auto-detect
       username: postgres
       password: postgres
     slave:
       url: jdbc:postgresql://localhost:5433/mydatabase
-      # driverClassName: org.postgresql.Driver # Let Spring Boot auto-detect
       username: postgres
       password: postgres
 
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect # This is important
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -23,11 +21,7 @@ spring:
   sql:
     init:
       mode: never
-      data-locations: classpath:data.sql,classpath:dummy_device_data.sql,classpath:policy_data.sql  # Explicitly list SQL files to run
-#  h2:
-#    console:
-#      enabled: true
-#      path: /h2-console
+      data-locations: classpath:data.sql,classpath:dummy_device_data.sql,classpath:policy_data.sql
 
 logging:
   level:
@@ -44,5 +38,14 @@ device:
     limit: 500
     responseSize: 100
 
-jwt:
-  global-key: MySuperSecretKeyForSimpleAdminV2Project_MustBeLong
+#  networks:
+#    default:
+#      driver: bridge
+
+volumes:
+  es_data:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge

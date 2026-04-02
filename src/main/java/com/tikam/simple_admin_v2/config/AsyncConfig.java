@@ -18,13 +18,4 @@ public class AsyncConfig {
         executor.initialize();
         return executor;
     }
-
-    public static void main(String[] args) {
-        int a = 0;
-        System.out.println(1 <<1);
-        int c = 1;
-        int d= 3;
-       int res = (int) Math.pow(2,3);
-        System.out.println(res);
-    }
 }

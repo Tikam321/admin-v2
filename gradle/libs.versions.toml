@@ -3,9 +3,11 @@ springBoot = "3.3.7"
 springDependencyManagement = "1.1.7"
 querydsl = "5.1.0"
 jjwt = "0.11.5"
-jacksonJsr310 = "2.15.2" # Using a recent stable version compatible with Spring Boot 3
+jacksonJsr310 = "2.15.2"
 lombok = "1.18.30"
 h2 = "2.2.224"
+spring-data-redis = "3.3.7"
+commons-io = "2.15.1"
 
 [libraries]
 # Spring Boot Starters
@@ -36,6 +38,11 @@ jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-ap
 lombok = { module = "org.projectlombok:lombok" }
 h2 = { module = "com.h2database:h2" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+commons-io = { module = "commons-io:commons-io", version.ref = "commons-io" }
+
+# Redis
+spring-boot-starter-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
+spring-boot-starter-cache = { module = "org.springframework.boot:spring-boot-starter-cache" }
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }

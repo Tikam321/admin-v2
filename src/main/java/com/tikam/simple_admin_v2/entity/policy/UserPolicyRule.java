@@ -28,5 +28,4 @@ public class UserPolicyRule extends BaseDateTimeEntity {
 
     @Column(name = "ctrl_val")
     private String controlValue;
-
 }

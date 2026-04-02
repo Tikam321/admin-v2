@@ -32,6 +32,10 @@ dependencies {
 	implementation libs.spring.boot.starter.actuator
 	implementation libs.spring.boot.starter.data.elasticsearch
 	
+	// Redis & Cache
+	implementation libs.spring.boot.starter.data.redis
+	implementation libs.spring.boot.starter.cache
+	
 	// Jackson JSR310 for Java 8 Date/Time support
 	implementation libs.jackson.datatype.jsr310
 
@@ -56,6 +60,9 @@ dependencies {
 	testImplementation libs.spring.boot.starter.test
 	testRuntimeOnly libs.junit.platform.launcher
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    
+    // Apache Commons IO
+    implementation libs.commons.io
 }
 
 // Configure the annotation processor to generate QueryDSL Q-classes

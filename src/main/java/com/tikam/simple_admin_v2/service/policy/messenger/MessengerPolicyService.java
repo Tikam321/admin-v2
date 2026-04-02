@@ -2,28 +2,28 @@ package com.tikam.simple_admin_v2.service.policy.messenger;
 
 import com.tikam.simple_admin_v2.annotation.validation.Messenger;
 import com.tikam.simple_admin_v2.dto.APIResponse;
-import com.tikam.simple_admin_v2.dto.policy.PortalPolicyRequest;
-import com.tikam.simple_admin_v2.dto.policy.PortalUserPolicyDto;
-import com.tikam.simple_admin_v2.dto.policy.PortalUserPolicyResponse;
+import com.tikam.simple_admin_v2.dto.policy.*;
 import com.tikam.simple_admin_v2.entity.User;
+import com.tikam.simple_admin_v2.entity.policy.CompanyLicensePolicy;
 import com.tikam.simple_admin_v2.entity.policy.UserPolicyRule;
 import com.tikam.simple_admin_v2.entity.policy.UserPolicyRuleId;
+import com.tikam.simple_admin_v2.exception.AdminException;
+import com.tikam.simple_admin_v2.exception.ErrorCode;
 import com.tikam.simple_admin_v2.repository.UserRepository;
 import com.tikam.simple_admin_v2.repository.policy.UserPolicyRuleRepository;
 import com.tikam.simple_admin_v2.repository.query.PolicyQueryRepository;
 import com.tikam.simple_admin_v2.service.policy.PolicyService;
 import jakarta.validation.constraints.NotEmpty;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
-@Messenger
+//@Messenger
+@Primary
 public class MessengerPolicyService extends PolicyService {
     private final UserPolicyRuleRepository userPolicyRuleRepository;
     private final UserRepository userRepository;
@@ -61,4 +61,32 @@ public class MessengerPolicyService extends PolicyService {
         List<User> userIds = userRepository.findByUserEpIdIn(epIds);
         return userIds;
     }
+
+    public List<CompanyPolicyResponse> getCompanyList(int companyId) {
+        List<CompanyPolicyResponse> companyPolicyList = policyQueryRepository.getCompanyList(companyId)
+                        .orElseThrow(() ->new AdminException(ErrorCode.NOT_FOUND, "Company policy not found"));
+        System.out.println(companyPolicyList);
+        return companyPolicyList;
+    }
+
+    public CompanyPolicyResponse getCompanyPolicy(int companyId, int policyId) {
+        CompanyPolicyResponse companyPolicyList = policyQueryRepository.getCompanyPolicy(companyId,policyId)
+                .orElseThrow(() ->new AdminException(ErrorCode.NOT_FOUND, "Company policy not found"));
+        System.out.println(companyPolicyList);
+        return companyPolicyList;
+    }
+
+    @Override
+    public PolicyResponse getDefaultPolicy(int policyLicenseId, int policyId) {
+        PolicyResponse policyRuleValue = policyQueryRepository.getPolicyRuleValueCheck(policyId)
+                .orElseThrow(() -> new AdminException(ErrorCode.NOT_FOUND, "Company policy not found"));
+
+        String defaultControlValue = policyQueryRepository.getDefaultPolicyValue(policyId, policyLicenseId)
+                .orElseThrow(() -> new AdminException(ErrorCode.NOT_FOUND, "Default policy value not found"));
+
+        policyRuleValue.setPermanentControlValue(defaultControlValue);
+
+        return policyRuleValue;
+    }
+
 }
