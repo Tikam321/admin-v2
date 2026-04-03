@@ -48,6 +48,14 @@ public class PolicyController {
         return  APIResponse.ok(policyService.getDefaultPolicy(policyLicenseId, policyRuleId));
     }
 
+    //add policy
+    @PostMapping("/workspace/policy/add")
+    public APIResponse addPolicy(@RequestBody @Valid AddPolicyRequest policyRequest) {
+        // Implementation for fetching company level policies
+        return policyService.addPolicy(policyRequest);
+    }
+
+
 
 
 

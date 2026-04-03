@@ -13,8 +13,9 @@ public enum ErrorCode {
     FORBIDDEN(HttpStatus.FORBIDDEN, "Authorization failed"),
     TOKEN_EXPIRED(HttpStatus.NOT_FOUND, "JWT Token Expired"),
     INVALID_TOKEN(HttpStatus.NOT_FOUND, "Invalid JWT Token"),
-    ARGUMENT_IS_INVALID(HttpStatus.NOT_FOUND, "argument is invalid");
-
+    ARGUMENT_IS_INVALID(HttpStatus.NOT_FOUND, "argument is invalid"),
+    DUPLICATE_POLICY(HttpStatus.ALREADY_REPORTED, "id already exist"),
+    POLICY_ADD_FAILED(HttpStatus.NOT_FOUND, "policy saved failed");
 
     private final HttpStatus status;
     private final String message;

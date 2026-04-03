@@ -2,6 +2,8 @@ package com.tikam.simple_admin_v2.entity.policy;
 
 import com.tikam.simple_admin_v2.entity.BaseDateTimeEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 

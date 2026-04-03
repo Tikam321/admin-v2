@@ -2,14 +2,16 @@ package com.tikam.simple_admin_v2.service.policy.teams;
 
 import com.tikam.simple_admin_v2.annotation.validation.Teams;
 import com.tikam.simple_admin_v2.dto.APIResponse;
-import com.tikam.simple_admin_v2.dto.policy.CompanyPolicyResponse;
-import com.tikam.simple_admin_v2.dto.policy.PolicyResponse;
-import com.tikam.simple_admin_v2.dto.policy.PortalPolicyRequest;
-import com.tikam.simple_admin_v2.dto.policy.PortalUserPolicyResponse;
+import com.tikam.simple_admin_v2.dto.policy.*;
+import com.tikam.simple_admin_v2.entity.policy.CompanyLicensePolicyRule;
+import com.tikam.simple_admin_v2.entity.policy.PolicyRule;
 import com.tikam.simple_admin_v2.exception.AdminException;
 import com.tikam.simple_admin_v2.exception.ErrorCode;
+import com.tikam.simple_admin_v2.repository.policy.CompanyLicensePolicyRuleRepository;
+import com.tikam.simple_admin_v2.repository.policy.PolicyRuleRepository;
 import com.tikam.simple_admin_v2.repository.query.PolicyQueryRepository;
 import com.tikam.simple_admin_v2.service.policy.PolicyService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +20,14 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 //@Teams
+@Slf4j
 public class TeamsMessengerService extends PolicyService {
-    protected TeamsMessengerService(PolicyQueryRepository policyQueryRepository) {
+    private final CompanyLicensePolicyRuleRepository companyLicensePolicyRuleRepository;
+    private final PolicyRuleRepository policyRuleRepository;
+    protected TeamsMessengerService(PolicyQueryRepository policyQueryRepository, CompanyLicensePolicyRuleRepository companyLicensePolicyRuleRepository, PolicyRuleRepository policyRuleRepository) {
         super(policyQueryRepository);
+        this.companyLicensePolicyRuleRepository = companyLicensePolicyRuleRepository;
+        this.policyRuleRepository = policyRuleRepository;
     }
 
     @Override
@@ -53,5 +60,21 @@ public class TeamsMessengerService extends PolicyService {
         policyRuleValue.setPermanentControlValue(defaultControlValue);
 
         return policyRuleValue;
+    }
+
+    @Transactional
+    @Override
+    public APIResponse addPolicy(AddPolicyRequest policyRequest) {
+        PolicyRule policyRule = new PolicyRule(policyRequest.getPolicyRuleId(), policyRequest.getRuleText(), policyRequest.getRuleText(),
+                policyRequest.getRuleTypeValue(), policyRequest.getDeliverClientYn(), policyRequest.getDeliverTenantAdminYn(),policyRequest.getPolicyGroupId(),
+                policyRequest.getDataType(), policyRequest.getPolicyUnit(), policyRequest.getPermanentControlValue(), policyRequest.getOrgPolicyRuleYn(),
+                policyRequest.getSecurityGradePolicyRuleYn(), policyRequest.getUserPolicyRuleYn(), policyRequest.getPolicyAlignNo());
+
+        CompanyLicensePolicyRule companyLicensePolicyRule = new CompanyLicensePolicyRule(101,policyRequest.getPolicyRuleId(), policyRequest.getPermanentControlValue());
+        companyLicensePolicyRuleRepository.save(companyLicensePolicyRule);
+        log.info("policy is added in companyLicensePolicy table");
+        policyRuleRepository.save(policyRule);
+        log.info("policy is added in policyRule table");
+        return APIResponse.added();
     }
 }

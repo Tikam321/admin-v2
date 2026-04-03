@@ -1,20 +1,21 @@
 package com.tikam.simple_admin_v2.service.policy.messenger;
 
-import com.tikam.simple_admin_v2.annotation.validation.Messenger;
 import com.tikam.simple_admin_v2.dto.APIResponse;
 import com.tikam.simple_admin_v2.dto.policy.*;
 import com.tikam.simple_admin_v2.entity.User;
-import com.tikam.simple_admin_v2.entity.policy.CompanyLicensePolicy;
-import com.tikam.simple_admin_v2.entity.policy.UserPolicyRule;
-import com.tikam.simple_admin_v2.entity.policy.UserPolicyRuleId;
+import com.tikam.simple_admin_v2.entity.policy.*;
 import com.tikam.simple_admin_v2.exception.AdminException;
 import com.tikam.simple_admin_v2.exception.ErrorCode;
 import com.tikam.simple_admin_v2.repository.UserRepository;
+import com.tikam.simple_admin_v2.repository.policy.CompanyLicensePolicyRuleRepository;
+import com.tikam.simple_admin_v2.repository.policy.PolicyRuleRepository;
 import com.tikam.simple_admin_v2.repository.policy.UserPolicyRuleRepository;
 import com.tikam.simple_admin_v2.repository.query.PolicyQueryRepository;
 import com.tikam.simple_admin_v2.service.policy.PolicyService;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,15 +25,22 @@ import java.util.*;
 @Transactional(readOnly = true)
 //@Messenger
 @Primary
+@Slf4j
 public class MessengerPolicyService extends PolicyService {
     private final UserPolicyRuleRepository userPolicyRuleRepository;
     private final UserRepository userRepository;
+    private final CompanyLicensePolicyRuleRepository companyLicensePolicyRuleRepository;
+    private final PolicyRuleRepository policyRuleRepository;
+
+    private final static int COMPANY_DEFAULT_LICENSE_ID = 101;
 
     protected MessengerPolicyService(PolicyQueryRepository policyQueryRepository,
-                                     UserPolicyRuleRepository userPolicyRuleRepository, UserRepository userRepository) {
+                                     UserPolicyRuleRepository userPolicyRuleRepository, UserRepository userRepository, CompanyLicensePolicyRuleRepository companyLicensePolicyRule, PolicyRuleRepository policyRuleRepository) {
         super(policyQueryRepository);
         this.userPolicyRuleRepository = userPolicyRuleRepository;
         this.userRepository = userRepository;
+        this.companyLicensePolicyRuleRepository = companyLicensePolicyRule;
+        this.policyRuleRepository = policyRuleRepository;
     }
 
     @Override
@@ -55,7 +63,6 @@ public class MessengerPolicyService extends PolicyService {
         System.out.println(portalUserResponse);
         return APIResponse.ok(new PortalUserPolicyResponse(policyId,portalUserResponse));
     }
-
 
     private List<User> getUsersFromEpIds(@NotEmpty List<String> epIds) {
         List<User> userIds = userRepository.findByUserEpIdIn(epIds);
@@ -89,4 +96,46 @@ public class MessengerPolicyService extends PolicyService {
         return policyRuleValue;
     }
 
+    @Transactional
+    @Override
+    public APIResponse addPolicy(AddPolicyRequest policyRequest) {
+
+        PolicyRule policyRule = PolicyRule
+                .builder()
+                .orgPolicyRuleYn(policyRequest.getOrgPolicyRuleYn())
+                .policyRuleId(policyRequest.getPolicyRuleId())
+                .userPolicyRuleYn(policyRequest.getUserPolicyRuleYn())
+                .securityGradePolicyRuleYn(policyRequest.getSecurityGradePolicyRuleYn())
+                .policyAlignNo(policyRequest.getPolicyAlignNo())
+                .policyGroupId(policyRequest.getPolicyGroupId())
+                .policyUnit(policyRequest.getPolicyUnit())
+                .ruleText(policyRequest.getRuleText())
+                .ruleTypeValue(policyRequest.getRuleTypeValue())
+                .dataType(policyRequest.getDataType())
+                .deliverClientYn(policyRequest.getDeliverClientYn())
+                .permanentControlValue(policyRequest.getPermanentControlValue())
+                .englishRuleText(policyRequest.getEnglishRuleText())
+                .deliverTenantAdminYn(policyRequest.getDeliverTenantAdminYn())
+                .build();
+        policyRuleRepository.save(policyRule);
+        CompanyLicensePolicyRule companyLicensePolicyRule = CompanyLicensePolicyRule
+                .builder()
+                .policyRuleId(policyRequest.getPolicyRuleId())
+                .companyLcsPolicyId(COMPANY_DEFAULT_LICENSE_ID)
+                .controlValue(policyRequest.getPermanentControlValue())
+                .build();
+        try {
+            // Save both entities
+             companyLicensePolicyRuleRepository.save(companyLicensePolicyRule);
+            log.info("Policy added to companyLicensePolicyRule table");
+
+            PolicyRule savedPolicy = policyRuleRepository.save(policyRule);
+            log.info("Policy added to policyRule table with ID: {}", savedPolicy.getPolicyRuleId());
+
+            return APIResponse.added();
+        }  catch (Exception e) {
+            log.error("Failed to add policy: {}", policyRequest.getPolicyRuleId(), e);
+            throw new AdminException(ErrorCode.POLICY_ADD_FAILED);
+        }
+    }
 }

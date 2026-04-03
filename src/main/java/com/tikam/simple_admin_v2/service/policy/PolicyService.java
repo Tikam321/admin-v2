@@ -53,4 +53,5 @@ public abstract class PolicyService {
     public abstract PolicyResponse getDefaultPolicy(int policyLicenseId, int policyId);
 
 
+    public abstract APIResponse addPolicy(@Valid AddPolicyRequest policyRequest);
 }

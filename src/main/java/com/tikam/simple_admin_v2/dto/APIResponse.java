@@ -30,6 +30,14 @@ public class APIResponse<T> {
                 .build();
     }
 
+    public static <T> APIResponse<T> added() {
+        return APIResponse.<T>builder()
+                .success(true)
+                .message("Added")
+                .data(null)
+                .build();
+    }
+
     public static <T> APIResponse<T> updated(T data) {
         return APIResponse.<T>builder()
                 .success(true)
