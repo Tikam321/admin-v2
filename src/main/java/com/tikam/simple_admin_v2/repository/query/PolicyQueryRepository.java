@@ -1,23 +1,22 @@
 package com.tikam.simple_admin_v2.repository.query;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.tikam.simple_admin_v2.dto.policy.CompanyPolicyResponse;
-import com.tikam.simple_admin_v2.dto.policy.PolicyResponse;
-import com.tikam.simple_admin_v2.dto.policy.QCompanyPolicyResponse;
-import com.tikam.simple_admin_v2.dto.policy.QPolicyResponse;
+import com.tikam.simple_admin_v2.dto.policy.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.tikam.simple_admin_v2.entity.QCSQ_TBT.cSQ_TBT;
+import static com.tikam.simple_admin_v2.entity.QUser.user;
 import static com.tikam.simple_admin_v2.entity.policy.QCompanyLicensePolicy.companyLicensePolicy;
 import static com.tikam.simple_admin_v2.entity.policy.QCompanyLicensePolicyRule.companyLicensePolicyRule;
 import static com.tikam.simple_admin_v2.entity.policy.QOrgPolicyRule.orgPolicyRule;
 import static com.tikam.simple_admin_v2.entity.policy.QPolicyRule.policyRule;
+import static com.tikam.simple_admin_v2.entity.policy.QUserPolicyRule.userPolicyRule;
 
 @Service
 @RequiredArgsConstructor
@@ -125,5 +124,44 @@ public class PolicyQueryRepository {
                 .from(policyRule)
                 .where(policyRule.policyRuleId.eq(policyId)).fetchFirst();
         return Optional.ofNullable(policyResponse);
+    }
+
+    public Optional<List<StoredPolicyValue>> getStoredCompanyPolicyRules(String companyCode, Long userId) {
+        List<StoredPolicyValue> storesPolicyList = jpaQueryFactory.select(new QStoredPolicyValue(orgPolicyRule.policyRuleId, orgPolicyRule.controlValue))
+                .from(orgPolicyRule)
+                .innerJoin(cSQ_TBT)
+                .on(cSQ_TBT.companyCode.eq(orgPolicyRule.companyCode).and(cSQ_TBT.subOrgCode
+                        .eq("_ALL_")))
+                .innerJoin(user)
+                .on(user.userEpId.eq(cSQ_TBT.employeeId))
+                .innerJoin(policyRule)
+                .on(policyRule.policyRuleId.eq(orgPolicyRule.policyRuleId))
+                .where(user.userId.eq(userId))
+                .fetch();
+        return Optional.ofNullable(storesPolicyList);
+    }
+
+    public Optional<List<StoredPolicyValue>> getStoredSubOrgPolicyRules(String companyCode,String subOrgCode, Long userId) {
+        List<StoredPolicyValue> storesPolicyList = jpaQueryFactory.select(new QStoredPolicyValue(orgPolicyRule.policyRuleId, orgPolicyRule.controlValue))
+                .from(orgPolicyRule)
+                .innerJoin(cSQ_TBT)
+                .on(cSQ_TBT.companyCode.eq(orgPolicyRule.companyCode).and(cSQ_TBT.subOrgCode.eq(subOrgCode)))
+                .innerJoin(user)
+                .on(user.userEpId.eq(cSQ_TBT.employeeId))
+                .innerJoin(policyRule)
+                .on(policyRule.policyRuleId.eq(orgPolicyRule.policyRuleId))
+                .where(user.userId.eq(userId).and(cSQ_TBT.companyCode.eq(companyCode)).and(cSQ_TBT.subOrgCode.eq(subOrgCode)))
+                .fetch();
+        return Optional.ofNullable(storesPolicyList);
+    }
+
+    public Optional<List<StoredPolicyValue>> getStoredUserPolicyRules( Long userId) {
+        List<StoredPolicyValue> storesPolicyList = jpaQueryFactory.select(new QStoredPolicyValue(userPolicyRule.policyRuleId, userPolicyRule.controlValue))
+                .from(userPolicyRule)
+                .innerJoin(user)
+                .on(user.userId.eq(userPolicyRule.userId))
+                .where(user.userId.eq(userId))
+                .fetch();
+        return Optional.ofNullable(storesPolicyList);
     }
 }

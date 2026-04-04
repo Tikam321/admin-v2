@@ -8,8 +8,12 @@ import com.tikam.simple_admin_v2.entity.admin.AdminUser;
 import com.tikam.simple_admin_v2.exception.ResourceNotFoundException;
 import com.tikam.simple_admin_v2.repository.admin.AdminUserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,10 +59,14 @@ public class AdminUserService {
         return AdminUserResponse.from(adminUser);
     }
     @Transactional(readOnly = true)
-    public List<AdminUserResponse> getAllAdminUsers() {
-        return adminUserRepository.findAll().stream()
-                .map(AdminUserResponse::from)
-                .collect(Collectors.toList());
+    public List<AdminUserResponse> getAllAdminUsers(int pageSize, int pageNumber) {
+        int index = pageNumber > 0 ? pageNumber - 1 : 0;
+        PageRequest pageable = PageRequest.of(index, pageSize);
+        Page<AdminUser> page = adminUserRepository.findAll(pageable);
+        return page.getContent().stream().map(AdminUserResponse::from).toList();
+//        return adminUserRepository.findAll().stream()
+//                .map(AdminUserResponse::from)
+//                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

@@ -34,8 +34,8 @@ VALUES
 -- 4. Populate 'cmpny_lcs_plc' (CompanyLicensePolicy) - Create main policy groups
 INSERT INTO cmpny_lcs_plc (cmpny_lcs_plc_id, lcs_id, cmpny_id, plc_typ_cd, plc_nm, plc_desc, use_yn, created_at, updated_at)
 VALUES
-(101, 1, 1, 1, 'Default Company Policy', 'Standard security settings for all employees.', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(102, 1, 1, 2, 'High Security Policy', 'Stricter settings for privileged users or departments.', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+(101, 1, 1, 1, 'global feature policy', 'Standard security settings for all employees.', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(102, 1, 1, 2, 'company policy'," for company feature policy" 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- 5. Populate 'cmpny_lcs_plc_rl' (CompanyLicensePolicyRule) - Link policy groups to specific rules
 INSERT INTO cmpny_lcs_plc_rl (cmpny_lcs_plc_id, plc_rl_id, ctrl_val, created_at, updated_at)

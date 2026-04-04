@@ -3,8 +3,6 @@ package com.tikam.simple_admin_v2.repository.query;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tikam.simple_admin_v2.dto.user.LoginInfoDto;
 import com.tikam.simple_admin_v2.dto.user.QLoginInfoDto;
-import com.tikam.simple_admin_v2.entity.QCSQ_TBT;
-import com.tikam.simple_admin_v2.entity.QUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.types.ExpressionUtils.count;
 import static com.tikam.simple_admin_v2.entity.QCSQ_TBT.cSQ_TBT;
 import static com.tikam.simple_admin_v2.entity.QUser.user;
 
@@ -52,10 +49,4 @@ public class UserQueryRepository {
                 .orderBy(cSQ_TBT.employeeId.desc())
                 .transform(groupBy(cSQ_TBT.employeeId).as(loginInfoDto));
     }
-
-
-
-
-
-
 }

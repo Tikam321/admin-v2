@@ -54,4 +54,5 @@ public abstract class PolicyService {
 
 
     public abstract APIResponse addPolicy(@Valid AddPolicyRequest policyRequest);
+    public abstract StoredPolicyRuleResponse allUserPolicyGet(Long userId, String companyCode,String subOrgCode);
 }

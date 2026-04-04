@@ -18,7 +18,6 @@ public class PolicyController {
         this.policyService = policyService;
     }
 
-
     @PostMapping("/policy/org/tree")
     public APIResponse<OrgPolicyTreeResponse> getOrgPolicyTree(@RequestBody @Valid OrgPolicyRequest orgPolicyRequest) {
         return APIResponse.ok(policyService.gtOrgPolicyTree(orgPolicyRequest));
@@ -48,12 +47,35 @@ public class PolicyController {
         return  APIResponse.ok(policyService.getDefaultPolicy(policyLicenseId, policyRuleId));
     }
 
-    //add policy
+    //add/update policy
     @PostMapping("/workspace/policy/add")
     public APIResponse addPolicy(@RequestBody @Valid AddPolicyRequest policyRequest) {
         // Implementation for fetching company level policies
         return policyService.addPolicy(policyRequest);
     }
+
+    // delete policy by policy id
+    // TODO: delete from userpolicyRule table
+    // TODO: delete from orgpolicyRule
+    // TODO: delete from policyRule
+    // TODO: delete from company license policy rule
+    @DeleteMapping("/workspace/policy/delete")
+    public APIResponse deletePolicy(@RequestParam Integer policyId) {
+        // Implementation for fetching company level policies
+        // implement later when you have time
+        return APIResponse.deleted();
+    }
+
+    @GetMapping("/workspace/policy/stored")
+    public APIResponse<StoredPolicyRuleResponse> allUserPolicyGet(
+            @RequestParam String companyCode, @RequestParam String subOrgCode, @RequestParam Long userId) {
+       return APIResponse.ok(policyService.allUserPolicyGet(userId, companyCode,subOrgCode));
+    }
+
+
+
+
+
 
 
 

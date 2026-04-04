@@ -32,6 +32,7 @@ public class MessengerPolicyService extends PolicyService {
     private final CompanyLicensePolicyRuleRepository companyLicensePolicyRuleRepository;
     private final PolicyRuleRepository policyRuleRepository;
 
+
     private final static int COMPANY_DEFAULT_LICENSE_ID = 101;
 
     protected MessengerPolicyService(PolicyQueryRepository policyQueryRepository,
@@ -132,10 +133,68 @@ public class MessengerPolicyService extends PolicyService {
             PolicyRule savedPolicy = policyRuleRepository.save(policyRule);
             log.info("Policy added to policyRule table with ID: {}", savedPolicy.getPolicyRuleId());
 
-            return APIResponse.added();
+            return APIResponse.added(true);
         }  catch (Exception e) {
             log.error("Failed to add policy: {}", policyRequest.getPolicyRuleId(), e);
             throw new AdminException(ErrorCode.POLICY_ADD_FAILED);
         }
     }
+
+    public StoredPolicyRuleResponse allUserPolicyGet(Long userId, String companyCode,String subOrgCode) {
+        List<CompanyPolicyResponse> companyList = policyQueryRepository.getCompanyList(1)
+                .orElseThrow(() -> new AdminException(ErrorCode.NOT_FOUND, "Company policy not found"));
+        log.info("the default company policy list is fetched");
+        List<StoredPolicyValue> companyStoredPolicies = policyQueryRepository.getStoredCompanyPolicyRules(companyCode, userId)
+                .orElseThrow(() -> new AdminException(ErrorCode.NOT_FOUND, "Company policy not found"));
+        log.info("the company policy list is fetched");
+
+        Map<Integer, String> defaultPolicyValueMap = new HashMap<>();
+
+        Map<Integer, String> companyStoredPolicyMap = new HashMap<>();
+        for(StoredPolicyValue storedPolicyValue: companyStoredPolicies) {
+            companyStoredPolicyMap.put(storedPolicyValue.getPolicyRuleId(), storedPolicyValue.getPolicyValue());
+            defaultPolicyValueMap.put(storedPolicyValue.getPolicyRuleId(), storedPolicyValue.getPolicyValue());
+        }
+
+        List<StoredPolicyValue> subOrgStoredPolicies = policyQueryRepository.getStoredSubOrgPolicyRules(companyCode,subOrgCode,userId)
+                .orElseThrow(() -> new AdminException(ErrorCode.NOT_FOUND, "SubOrg policy Not found"));
+        log.info("the subOrg policy list is fetched");
+
+        Map<Integer, String> subOrgStoredPolicyMap = new HashMap<>();
+        for(StoredPolicyValue storedPolicyValue: subOrgStoredPolicies) {
+            subOrgStoredPolicyMap.put(storedPolicyValue.getPolicyRuleId(), storedPolicyValue.getPolicyValue());
+            defaultPolicyValueMap.put(storedPolicyValue.getPolicyRuleId(), storedPolicyValue.getPolicyValue());
+
+        }
+
+        List<StoredPolicyValue> userStoredPolicies = policyQueryRepository.getStoredUserPolicyRules(userId)
+                .orElseThrow(() -> new AdminException(ErrorCode.NOT_FOUND, "user policy Not found"));
+        log.info("the user policy list is fetched");
+
+        Map<Integer, String> userStoredPolicyMap = new HashMap<>();
+        for(StoredPolicyValue storedPolicyValue: userStoredPolicies) {
+            userStoredPolicyMap.put(storedPolicyValue.getPolicyRuleId(), storedPolicyValue.getPolicyValue());
+            defaultPolicyValueMap.put(storedPolicyValue.getPolicyRuleId(), storedPolicyValue.getPolicyValue());
+        }
+
+        List<StoredPolicyRule> storedPolicyRules = new ArrayList<>();
+        for (CompanyPolicyResponse companyPolicyResponse : companyList) {
+            StoredPolicyRule storedPolicyRule = StoredPolicyRule.builder()
+                    .policyRuleName(companyPolicyResponse.getPolicyName())
+                    .policyRuleId(companyPolicyResponse.getPolicyRuleId())
+                    .companyValue("1")
+                    .defaultValue(companyPolicyResponse.getControlValue())
+                    .subOrgValue(subOrgStoredPolicyMap.get(companyPolicyResponse.getPolicyRuleId()))
+                    .companyValue(companyStoredPolicyMap.get(companyPolicyResponse.getPolicyRuleId()))
+                    .userValue(userStoredPolicyMap.get(companyPolicyResponse.getPolicyRuleId()))
+                    .finalValue(defaultPolicyValueMap.get(companyPolicyResponse.getPolicyRuleId()))
+                    .build();
+            storedPolicyRules.add(storedPolicyRule);
+        }
+        StoredPolicyRuleResponse storedPolicyRuleResponse = new StoredPolicyRuleResponse();
+        storedPolicyRuleResponse.setUserId(userId);
+        storedPolicyRuleResponse.setStoredPolicyRuleList(storedPolicyRules);
+        return storedPolicyRuleResponse;
+    }
+
 }

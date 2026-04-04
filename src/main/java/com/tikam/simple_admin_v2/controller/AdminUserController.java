@@ -8,15 +8,18 @@ import com.tikam.simple_admin_v2.dto.admin.AdminUserUpdateRequest;
 import com.tikam.simple_admin_v2.entity.admin.AdminUser;
 import com.tikam.simple_admin_v2.service.admin.AdminUserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @RestController
 @RequestMapping("/api/admin-users")
 @RequiredArgsConstructor
+@Validated
 public class AdminUserController {
 
     private final AdminUserService adminUserService;
@@ -38,8 +41,8 @@ public class AdminUserController {
     }
 
     @GetMapping
-    public ResponseEntity<APIResponse<List<AdminUserResponse>>> getAllAdminUsers() {
-        List<AdminUserResponse> response = adminUserService.getAllAdminUsers();
+    public ResponseEntity<APIResponse<List<AdminUserResponse>>> getAllAdminUsers(@RequestParam @Min(10) int pageSize, @RequestParam @Min(1) int pageNumber) {
+        List<AdminUserResponse> response = adminUserService.getAllAdminUsers(pageSize, pageNumber);
         return ResponseEntity.ok(APIResponse.ok(response));
     }
 

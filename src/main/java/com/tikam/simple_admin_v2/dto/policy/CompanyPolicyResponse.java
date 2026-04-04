@@ -28,4 +28,6 @@ public class CompanyPolicyResponse {
         this.language = language;
         this.controlValue = controlValue;
     }
+
+
 }
